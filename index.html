@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한영 단어 학습 게임</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://source.unsplash.com/1600x900/?nature,landscape');
+            background-size: cover;
+            background-position: center;
+        }
+        .game-container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        #word-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+        input {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        #score {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        #level-buttons {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>한영 단어 학습 게임</h1>
+        <div id="level-buttons">
+            <button onclick="setLevel('beginner')">초급</button>
+            <button onclick="setLevel('intermediate')">중급</button>
+            <button onclick="setLevel('advanced')">고급</button>
+        </div>
+        <div id="word-display"></div>
+        <input type="text" id="word-input" placeholder="영어 단어를 입력하세요">
+        <button id="submit-btn">제출</button>
+        <p id="result"></p>
+        <p>점수: <span id="score">0</span></p>
+    </div>
+
+    <script>
+        const dictionary = {
+            beginner: [
+                {korean: '사과', english: 'apple'},
+                {korean: '책', english: 'book'},
+                {korean: '고양이', english: 'cat'},
+                {korean: '개', english: 'dog'},
+                {korean: '달걀', english: 'egg'},
+                {korean: '친구', english: 'friend'},
+                {korean: '모자', english: 'hat'},
+                {korean: '얼음', english: 'ice'},
+                {korean: '주스', english: 'juice'},
+                {korean: '열쇠', english: 'key'},
+                {korean: '빛', english: 'light'},
+                {korean: '돈', english: 'money'},
+                {korean: '이름', english: 'name'},
+                {korean: '주황색', english: 'orange'},
+                {korean: '연필', english: 'pencil'},
+                {korean: '여왕', english: 'queen'},
+                {korean: '빨간색', english: 'red'},
+                {korean: '학교', english: 'school'},
+                {korean: '나무', english: 'tree'},
+                {korean: '우산', english: 'umbrella'},
+                {korean: '채소', english: 'vegetable'},
+                {korean: '물', english: 'water'},
+                {korean: 'X-레이', english: 'x-ray'},
+                {korean: '노란색', english: 'yellow'},
+                {korean: '동물원', english: 'zoo'},
+                {korean: '공', english: 'ball'},
+                {korean: '의자', english: 'chair'},
+                {korean: '문', english: 'door'},
+                {korean: '눈', english: 'eye'},
+                {korean: '물고기', english: 'fish'}
+            ],
+            intermediate: [
+                {korean: '모험', english: 'adventure'},
+                {korean: '아름다운', english: 'beautiful'},
+                {korean: '도전', english: 'challenge'},
+                {korean: '위험', english: 'danger'},
+                {korean: '환경', english: 'environment'},
+                {korean: '자유', english: 'freedom'},
+                {korean: '정부', english: 'government'},
+                {korean: '행복', english: 'happiness'},
+                {korean: '상상력', english: 'imagination'},
+                {korean: '여행', english: 'journey'},
+                {korean: '지식', english: 'knowledge'},
+                {korean: '언어', english: 'language'},
+                {korean: '음악', english: 'music'},
+                {korean: '자연', english: 'nature'},
+                {korean: '기회', english: 'opportunity'},
+                {korean: '철학', english: 'philosophy'},
+                {korean: '품질', english: 'quality'},
+                {korean: '관계', english: 'relationship'},
+                {korean: '과학', english: 'science'},
+                {korean: '기술', english: 'technology'},
+                {korean: '이해', english: 'understanding'},
+                {korean: '가치', english: 'value'},
+                {korean: '세계', english: 'world'},
+                {korean: '청년', english: 'youth'},
+                {korean: '열정', english: 'passion'},
+                {korean: '창의성', english: 'creativity'},
+                {korean: '문화', english: 'culture'},
+                {korean: '경제', english: 'economy'},
+                {korean: '교육', english: 'education'},
+                {korean: '혁신', english: 'innovation'}
+            ],
+            advanced: [
+                {korean: '야망', english: 'ambition'},
+                {korean: '관료주의', english: 'bureaucracy'},
+                {korean: '타협', english: 'compromise'},
+                {korean: '민주주의', english: 'democracy'},
+                {korean: '윤리', english: 'ethics'},
+                {korean: '세계화', english: 'globalization'},
+                {korean: '가설', english: 'hypothesis'},
+                {korean: '이데올로기', english: 'ideology'},
+                {korean: '사법부', english: 'judiciary'},
+                {korean: '형이상학', english: 'metaphysics'},
+                {korean: '중립성', english: 'neutrality'},
+                {korean: '객관성', english: 'objectivity'},
+                {korean: '패러다임', english: 'paradigm'},
+                {korean: '양자역학', english: 'quantum mechanics'},
+                {korean: '상대성', english: 'relativity'},
+                {korean: '주권', english: 'sovereignty'},
+                {korean: '초월론', english: 'transcendentalism'},
+                {korean: '공리주의', english: 'utilitarianism'},
+                {korean: '검증', english: 'verification'},
+                {korean: '세계관', english: 'worldview'},
+                {korean: '인식론', english: 'epistemology'},
+                {korean: '존재론', english: 'ontology'},
+                {korean: '현상학', english: 'phenomenology'},
+                {korean: '실존주의', english: 'existentialism'},
+                {korean: '결정론', english: 'determinism'},
+                {korean: '경험주의', english: 'empiricism'},
+                {korean: '합리주의', english: 'rationalism'},
+                {korean: '회의주의', english: 'skepticism'},
+                {korean: '유물론', english: 'materialism'},
+                {korean: '이상주의', english: 'idealism'}
+            ]
+        };
+
+        let currentLevel = 'beginner';
+        let currentWord;
+        let score = 0;
+
+        const synth = window.speechSynthesis;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const wordDisplay = document.getElementById('word-display');
+            const wordInput = document.getElementById('word-input');
+            const submitBtn = document.getElementById('submit-btn');
+            const result = document.getElementById('result');
+            const scoreDisplay = document.getElementById('score');
+
+            function getRandomWord(level) {
+                const words = dictionary[level];
+                const randomIndex = Math.floor(Math.random() * words.length);
+                return words[randomIndex];
+            }
+
+            function startGame() {
+                currentWord = getRandomWord(currentLevel);
+                wordDisplay.textContent = currentWord.korean;
+                wordInput.value = '';
+                result.textContent = '';
+            }
+
+            function speakWord(word) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                synth.speak(utterance);
+            }
+
+            function checkAnswer() {
+                const userAnswer = wordInput.value.toLowerCase().trim();
+                if (userAnswer === currentWord.english) {
+                    result.textContent = '정답입니다!';
+                    score++;
+                    scoreDisplay.textContent = score;
+                    speakWord(currentWord.english);
+                    setTimeout(startGame, 2000);
+                } else {
+                    result.textContent = `틀렸습니다. 정답은 ${currentWord.english}입니다.`;
+                    speakWord(currentWord.english);
+                }
+            }
+
+            if (submitBtn) {
+                submitBtn.addEventListener('click', checkAnswer);
+            }
+
+            if (wordInput) {
+                wordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkAnswer();
+                    }
+                });
+            }
+
+            startGame();
+        });
+
+        function setLevel(level) {
+            currentLevel = level;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            startGame();
+        }
+    </script>
+</body>
+</html>
